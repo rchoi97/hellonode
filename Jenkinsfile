@@ -2,7 +2,7 @@
 
 sAgentLabel = 'wsl2'
 
-node sAgentLabel {
+node(sAgentLabel) {
     def app
 
     stage('Clone repository') {
