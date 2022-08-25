@@ -5,8 +5,9 @@
 
 sAgentLabel = 'wsl2'
 sCredIdDockerHub = 'hub.docker.com-user-rogerchoi-1'
-// sDockerRegistry = 'https://registry.hub.docker.com'
-sDockerRegistry = 'https://hub.docker.com'
+sDockerRegistry = 'https://registry.hub.docker.com'
+// error 404
+// sDockerRegistry = 'https://hub.docker.com'
 sImageTag = '0.0.1'
 
 node(sAgentLabel) {
