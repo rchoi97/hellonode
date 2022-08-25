@@ -28,12 +28,14 @@ node(sAgentLabel) {
     }
 
     stage('Check image tag already exist') {
-        aImageAlreadyExist = true
-        try {
-            docker.image("${sImageRepo}:${sImageTag}").pull()
-        }
-        catch( Exception e ) {
-            aImageAlreadyExist = false
+        docker.withRegistry( sDockerRegistry, sCredIdDockerHub ) {
+            aImageAlreadyExist = true
+            try {
+                docker.image("${sImageRepo}:${sImageTag}").pull()
+            }
+            catch( Exception e ) {
+                aImageAlreadyExist = false
+            }
         }
 
         if( aImageAlreadyExist ) {
