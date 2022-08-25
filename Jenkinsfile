@@ -9,7 +9,7 @@ sDockerRegistry = 'https://registry.hub.docker.com'
 // error 404
 // sDockerRegistry = 'https://hub.docker.com'
 // For docker-hub, each image family is a repository
-sImageTag = '0.0.3'
+sImageTag = '0.0.4'
 sImageRepo = 'rogerchoi/repo'
 
 // https://docs.docker.com/docker-hub/repos/#:~:text=To%20push%20an%20image%20to,docs%2Fbase%3Atesting%20).
@@ -23,45 +23,51 @@ sImageRepo = 'rogerchoi/repo'
 node(sAgentLabel) {
     def app
 
-    stage('Clone repository') {
-        checkout scm
-    }
+    try {
+        stage('Clone repository') {
+            checkout scm
+        }
 
-    stage('Check image tag already exist') {
-        docker.withRegistry( sDockerRegistry, sCredIdDockerHub ) {
-            aImageAlreadyExist = true
-            try {
-                docker.image("${sImageRepo}:${sImageTag}").pull()
+        stage('Check image tag already exist') {
+            docker.withRegistry( sDockerRegistry, sCredIdDockerHub ) {
+                aImageAlreadyExist = true
+                try {
+                    docker.image("${sImageRepo}:${sImageTag}").pull()
+                }
+                catch( Exception e ) {
+                    aImageAlreadyExist = false
+                }
             }
-            catch( Exception e ) {
-                aImageAlreadyExist = false
+
+            if( aImageAlreadyExist ) {
+                throw new Exception(
+                    "ERROR image ${sImageRepo}:${sImageTag} exist - advance tag or delete image" )
             }
         }
 
-        if( aImageAlreadyExist ) {
-            throw new Exception(
-                "ERROR image ${sImageRepo}:${sImageTag} exist - advance tag or delete image" )
+        stage('Build image') {
+            // build with the Dockerfile
+            app = docker.build(sImageRepo)
+        }
+
+        stage('Test image') {
+            app.inside {
+                sh """
+                    echo "Tests passed"
+                """
+            }
+        }
+
+        stage('Push image') {
+            docker.withRegistry( sDockerRegistry, sCredIdDockerHub ) {
+                app.push(sImageTag)
+                app.push("latest")
+            }
         }
     }
-
-    stage('Build image') {
-        // build with the Dockerfile
-        app = docker.build(sImageRepo)
-    }
-
-    stage('Test image') {
-        app.inside {
-            sh """
-                echo "Tests passed"
-            """
-        }
-    }
-
-    stage('Push image') {
-        docker.withRegistry( sDockerRegistry, sCredIdDockerHub ) {
-            app.push(sImageTag)
-            // app.push("${env.BUILD_NUMBER}")
-            // app.push("latest")
-        }
+    finally {
+        sh """
+            docker images | fgrep ${sImageRepo}
+        """
     }
 }
