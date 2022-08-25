@@ -1,6 +1,12 @@
 // https://tutorials.releaseworksacademy.com/learn/building-your-first-docker-image-with-jenkins-2-guide-for-developers
 
+
+// docker login -u rogerchoi
+// dckr_pat_6mGoTsLU0IJxV47PTvagTXYwFRc
+
 sAgentLabel = 'wsl2'
+sCredIdDockerHub = 'hub.docker.com-user-rogerchoi-1'
+sDockerRegistry = 'https://registry.hub.docker.com'
 
 node(sAgentLabel) {
     def app
@@ -22,12 +28,10 @@ node(sAgentLabel) {
         }
     }
 
-/*
     stage('Push image') {
-        docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+        docker.withRegistry( sDockerRegistry, sCredIdDockerHub ) {
             app.push("${env.BUILD_NUMBER}")
             app.push("latest")
         }
     }
-*/
 }
