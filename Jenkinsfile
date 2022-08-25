@@ -10,19 +10,24 @@ node sAgentLabel {
     }
 
     stage('Build image') {
+        // build with the Dockerfile
         app = docker.build("releaseworks/hellonode")
     }
 
     stage('Test image') {
         app.inside {
-            sh 'echo "Tests passed"'
+            sh """
+                echo "Tests passed"
+            """
         }
     }
 
+/*
     stage('Push image') {
         docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
             app.push("${env.BUILD_NUMBER}")
             app.push("latest")
         }
     }
+*/
 }
