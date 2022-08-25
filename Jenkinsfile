@@ -9,6 +9,8 @@ sDockerRegistry = 'https://registry.hub.docker.com'
 // error 404
 // sDockerRegistry = 'https://hub.docker.com'
 sImageTag = '0.0.1'
+sImageName = 'hellonode'
+sImageRepo = 'repo'
 
 node(sAgentLabel) {
     def app
@@ -19,7 +21,8 @@ node(sAgentLabel) {
 
     stage('Build image') {
         // build with the Dockerfile
-        app = docker.build("releaseworks/hellonode")
+        // app = docker.build("releaseworks/hellonode")
+        app = docker.build("${sImageRepo}/${sImageName}")
     }
 
     stage('Test image') {
@@ -32,7 +35,7 @@ node(sAgentLabel) {
 
     stage('Push image') {
         docker.withRegistry( sDockerRegistry, sCredIdDockerHub ) {
-            app.push( sImageTag )
+            app.push(sImageTag)
             // app.push("${env.BUILD_NUMBER}")
             // app.push("latest")
         }
