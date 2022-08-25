@@ -30,7 +30,7 @@ node(sAgentLabel) {
     stage('Check image tag already exist') {
         aImageAlreadyExist = true
         try {
-            docker.image("${sImageRepo}:${sImageTag}").pull()
+            docker.image("registry.hub.docker.com'/${sImageRepo}:${sImageTag}").pull()
         }
         catch( Exception e ) {
             aImageAlreadyExist = false
