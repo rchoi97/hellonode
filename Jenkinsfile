@@ -8,9 +8,8 @@ sCredIdDockerHub = 'hub.docker.com-user-rogerchoi-1'
 sDockerRegistry = 'https://registry.hub.docker.com'
 // error 404
 // sDockerRegistry = 'https://hub.docker.com'
-// FOr docker-hub, each image family is a repository
+// For docker-hub, each image family is a repository
 sImageTag = '0.0.1'
-// sImageName = 'hellonode'
 sImageRepo = 'rogerchoi/repo'
 
 // https://docs.docker.com/docker-hub/repos/#:~:text=To%20push%20an%20image%20to,docs%2Fbase%3Atesting%20).
@@ -28,10 +27,23 @@ node(sAgentLabel) {
         checkout scm
     }
 
+    stage('Check image tag already exist') {
+        aImageAlreadyExist = true
+        try {
+            docker.image("${sImageRepo}:${sImageTag}").pull()
+        }
+        catch( Exception e ) {
+            aImageAlreadyExist = false
+        }
+
+        if( aImageAlreadyExist ) {
+            throw new Exception(
+                "ERROR image ${sImageRepo}:${sImageTag} exist - advance tag or delete image" )
+        }
+    }
+
     stage('Build image') {
         // build with the Dockerfile
-        // app = docker.build("releaseworks/hellonode")
-        // image in docker hub should be named <hub-user>/<repo-name>:<tag>
         app = docker.build(sImageRepo)
     }
 
