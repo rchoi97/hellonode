@@ -8,9 +8,18 @@ sCredIdDockerHub = 'hub.docker.com-user-rogerchoi-1'
 sDockerRegistry = 'https://registry.hub.docker.com'
 // error 404
 // sDockerRegistry = 'https://hub.docker.com'
+// FOr docker-hub, each image family is a repository
 sImageTag = '0.0.1'
-sImageName = 'hellonode'
-sImageRepo = 'repo'
+// sImageName = 'hellonode'
+sImageRepo = 'rogerchoi/repo'
+
+// https://docs.docker.com/docker-hub/repos/#:~:text=To%20push%20an%20image%20to,docs%2Fbase%3Atesting%20).
+// https://www.section.io/engineering-education/docker-push-for-publishing-images-to-docker-hub/
+// tag image with one of these
+// . docker build -t <hub-user>/<repo-name>[:<tag>]
+// . docker tag <existing-image> <hub-user>/<repo-name>[:<tag>]
+// . docker commit <existing-container> <hub-user>/<repo-name>[:<tag>]
+// docker push <hub-user>/<repo-name>:<tag>
 
 node(sAgentLabel) {
     def app
@@ -22,7 +31,8 @@ node(sAgentLabel) {
     stage('Build image') {
         // build with the Dockerfile
         // app = docker.build("releaseworks/hellonode")
-        app = docker.build("${sImageRepo}/${sImageName}")
+        // image in docker hub should be named <hub-user>/<repo-name>:<tag>
+        app = docker.build(sImageRepo)
     }
 
     stage('Test image') {
