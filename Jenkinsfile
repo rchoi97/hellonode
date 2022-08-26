@@ -9,7 +9,7 @@ sDockerRegistry = 'https://registry.hub.docker.com'
 // error 404
 // sDockerRegistry = 'https://hub.docker.com'
 // For docker-hub, each image family is a repository
-sImageTag = '0.0.4'
+sImageTag = '0.0.5c'
 sImageRepo = 'rogerchoi/repo'
 
 // https://docs.docker.com/docker-hub/repos/#:~:text=To%20push%20an%20image%20to,docs%2Fbase%3Atesting%20).
